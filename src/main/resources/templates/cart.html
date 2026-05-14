@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Giỏ Hàng - Kho Linh Kiện</title>
+  <link rel="stylesheet" th:href="@{/css/index.css}">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <style>
+    .cart-container { padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-top: 20px; }
+    .cart-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    .cart-table th, .cart-table td { padding: 15px; text-align: center; border-bottom: 1px solid #ddd; }
+    .cart-table th { background: #f8f9fa; font-weight: bold; color: #2c3e50; }
+    .cart-item-img { width: 70px; height: 70px; object-fit: cover; border-radius: 4px; }
+    .qty-btn { padding: 5px 12px; border: 1px solid #ccc; background: #f8f9fa; cursor: pointer; font-weight: bold; font-size: 16px; border-radius: 4px; }
+    .qty-btn:hover { background: #e2e6ea; }
+    .qty-input { width: 50px; text-align: center; padding: 6px; border: 1px solid #ccc; font-weight: bold; border-radius: 4px; margin: 0 5px; }
+    .btn-remove { color: white; background: #e74c3c; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    .btn-remove:hover { background: #c0392b; }
+    .cart-summary { text-align: right; padding: 20px; background: #f8f9fa; border-radius: 8px; }
+    .btn-checkout { background: #2ecc71; color: white; border: none; padding: 12px 30px; border-radius: 5px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+    .btn-checkout:hover { background: #27ae60; }
+    .empty-cart { text-align: center; padding: 50px; color: #7f8c8d; font-size: 20px; }
+  </style>
+</head>
+<body>
+<div class="store-layout">
+  <aside class="left-panel">
+    <div class="brand-block" style="cursor: pointer;" onclick="window.location.href='/'">
+      <h1>Kho Linh Kiện</h1>
+      <p>Về Trang Chủ</p>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <h2 style="margin: 0; color: #2c3e50;">🛒 Giỏ hàng của bạn</h2>
+      <button class="icon-btn" onclick="window.location.href='/'" style="background: #3498db; color: white; padding: 10px 20px;">⬅ Tiếp tục mua sắm</button>
+    </header>
+
+    <div class="cart-container" id="cart-content">
+      <div class="empty-cart">Đang tải giỏ hàng...</div>
+    </div>
+  </main>
+</div>
+
+<script th:src="@{/js/cart.js}"></script>
+</body>
+</html>

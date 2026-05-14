@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Đơn hàng của tôi - Kho Linh Kiện</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        .orders-container { padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-top: 20px; }
+        .orders-table { width: 100%; border-collapse: collapse; }
+        .orders-table th, .orders-table td { padding: 14px; border-bottom: 1px solid #ddd; text-align: center; }
+        .orders-table th { background: #f8f9fa; color: #2c3e50; }
+        .btn-small { border: none; border-radius: 4px; padding: 7px 12px; cursor: pointer; color: #fff; margin: 2px; }
+        .btn-cancel { background: #e74c3c; }
+        .btn-detail { background: #3498db; }
+        .order-detail-box { margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; display: none; }
+        .empty-orders { text-align: center; padding: 50px; color: #7f8c8d; font-size: 20px; }
+    </style>
+</head>
+<body>
+<div class="store-layout">
+    <aside class="left-panel">
+        <div class="brand-block" style="cursor: pointer;" onclick="window.location.href='/'">
+            <h1>Kho Linh Kiện</h1>
+            <p>Về Trang Chủ</p>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <h2 style="margin: 0; color: #2c3e50;">📦 Đơn hàng của tôi</h2>
+            <button class="icon-btn" onclick="window.location.href='/'" style="background: #3498db; color: white; padding: 10px 20px;">⬅ Tiếp tục mua sắm</button>
+        </header>
+
+        <div class="orders-container" id="orders-content">
+            <div class="empty-orders">Đang tải đơn hàng...</div>
+        </div>
+        <div class="order-detail-box" id="order-detail-box"></div>
+    </main>
+</div>
+<script th:src="@{/js/orders.js}"></script>
+</body>
+</html>

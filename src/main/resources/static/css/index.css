@@ -1,0 +1,516 @@
+:root {
+    --bg: #f3f3f8;
+    --panel: #ffffff;
+    --primary: #151f8d;
+    --primary-soft: #2e3cb7;
+    --text: #1a2146;
+    --muted: #8e93ae;
+    --line: #e9eaf2;
+    --success: #62c475;
+    --danger: #b9c0d3;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+.store-layout {
+    display: grid;
+    grid-template-columns: 270px minmax(0, 1fr);
+    min-height: 100vh;
+}
+
+.left-panel {
+    background: #f6f7fb;
+    border-right: 1px solid var(--line);
+    padding: 22px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.brand-block h1 {
+    font-size: 30px;
+    color: var(--primary);
+    line-height: 1;
+}
+
+.brand-block p {
+    margin-top: 4px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 11px;
+}
+
+.left-title {
+    color: #2a3265;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.filter-block {
+    margin-top: 8px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+}
+
+.price-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.price-filter input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.price-filter input:focus {
+    border-color: var(--primary-soft);
+}
+
+.price-filter input::placeholder {
+    color: #a1a7bf;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.filter-btn {
+    flex: 1;
+    padding: 10px 0;
+    border-radius: 10px;
+    border: 0;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.filter-btn.primary {
+    background: var(--primary);
+    color: #fff;
+}
+
+.filter-btn.primary:hover {
+    background: var(--primary-soft);
+}
+
+.filter-btn.secondary {
+    background: #e6e9ff;
+    color: var(--primary);
+    border: 1px solid #c7ceff;
+}
+
+.filter-btn.secondary:hover {
+    background: #d8dcff;
+}
+
+.danh-muc {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.btn-danh-muc {
+    text-align: left;
+    border: 1px solid transparent;
+    background: transparent;
+    border-radius: 12px;
+    color: #555f86;
+    font-weight: 600;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-danh-muc:hover,
+.btn-danh-muc.active {
+    background: #e6e9ff;
+    color: var(--primary);
+    border-color: #c7ceff;
+}
+
+.main-content {
+    padding: 18px 20px 24px;
+}
+
+.topbar {
+    border-radius: 14px;
+    background: linear-gradient(90deg, #535cb4, #6c73cf);
+    padding: 12px 16px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 16px;
+}
+
+.top-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.search-box input {
+    min-width: 320px;
+    border: 0;
+    outline: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+.search-box input::placeholder {
+    color: #d7ddff;
+}
+
+.icon-btn {
+    border: 0;
+    min-width: 92px;
+    height: 36px;
+    padding: 0 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-weight: 700;
+}
+
+.hero-banner {
+    margin-top: 16px;
+    border-radius: 18px;
+    padding: 34px;
+    min-height: 300px;
+    background: radial-gradient(circle at right, rgba(60, 102, 255, 0.35), transparent 58%), linear-gradient(130deg, #101b86 0%, #182b9c 55%, #1f36ad 100%);
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-banner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 18px 18px;
+}
+
+.hero-content {
+    position: relative;
+    max-width: 520px;
+}
+
+.hero-tag {
+    display: inline-block;
+    background: #f08d2f;
+    color: #fff;
+    border-radius: 6px;
+    padding: 5px 8px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.hero-content h2 {
+    font-size: 54px;
+    line-height: 1.05;
+    margin: 16px 0;
+}
+
+.hero-content p {
+    color: #d6dbff;
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.section-head {
+    margin-top: 24px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+}
+
+.section-head h3 {
+    font-size: 34px;
+    color: #212b68;
+}
+
+.section-head h3 span {
+    font-size: 18px;
+    color: #9aa0ba;
+}
+
+.noi_dung {
+    margin-top: 16px;
+}
+
+.danh_sach_san_pham {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.san-pham {
+    background: var(--panel);
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.san-pham:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 24px rgba(12, 23, 94, 0.08);
+}
+
+.thumbnail-wrap {
+    position: relative;
+    height: 180px;
+    padding: 18px;
+    background: #f6f7fb;
+}
+
+.anh-san-pham {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.stock-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 11px;
+    border-radius: 100px;
+    padding: 4px 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.stock-badge.in-stock {
+    color: #1c6a2f;
+    background: #c8f5d0;
+}
+
+.stock-badge.out-stock {
+    color: #677289;
+    background: #dbe0ea;
+}
+
+.product-body {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-grow: 1;
+}
+
+.ten-san-pham {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2758;
+}
+
+.sku {
+    font-size: 11px;
+    color: #a1a7bf;
+    text-transform: uppercase;
+}
+
+.mo-ta {
+    font-size: 14px;
+    color: #6f7592;
+    line-height: 1.5;
+    min-height: 42px;
+}
+
+.gia-san-pham {
+    font-size: 34px;
+    color: #14207f;
+    font-weight: 800;
+}
+
+.btn-them {
+    margin-top: auto;
+    border: 0;
+    border-radius: 8px;
+    background: #152184;
+    color: #fff;
+    font-weight: 700;
+    padding: 10px 12px;
+    cursor: pointer;
+}
+
+.btn-them.out {
+    background: #cfd6e4;
+    color: #5d6784;
+}
+
+#phan-trang {
+    margin-top: 20px;
+}
+
+.pagination-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.pagination-info {
+    color: #868daa;
+}
+
+.pagination-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.btn-pagination {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #dbe0f1;
+    border-radius: 8px;
+    background: #fff;
+    color: #42508f;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-pagination.active {
+    background: #141f85;
+    color: #fff;
+    border-color: #141f85;
+}
+
+.btn-pagination.disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.pagination-dots {
+    color: #7f88a9;
+    font-weight: 700;
+    padding: 8px;
+}
+
+.empty-state {
+    background: #fff;
+    border: 1px dashed #cfd4e8;
+    border-radius: 12px;
+    padding: 28px;
+    text-align: center;
+    color: #7680a1;
+}
+
+@media (max-width: 1200px) {
+    .danh_sach_san_pham {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .hero-content h2 {
+        font-size: 40px;
+    }
+
+    .search-box input {
+        min-width: 220px;
+    }
+}
+
+@media (max-width: 900px) {
+    .store-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .left-panel {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .pro-card {
+        margin-top: 6px;
+    }
+
+    .topbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .top-actions {
+        width: 100%;
+    }
+
+    .search-box {
+        flex: 1;
+    }
+
+    .search-box input {
+        min-width: 0;
+        width: 100%;
+    }
+}
+
+@media (max-width: 640px) {
+    .main-content {
+        padding: 12px;
+    }
+
+    .section-head {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .section-head h3 {
+        font-size: 28px;
+    }
+
+    .danh_sach_san_pham {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-banner {
+        padding: 20px;
+        min-height: auto;
+    }
+
+    .hero-content h2 {
+        font-size: 34px;
+    }
+
+    .hero-content p {
+        font-size: 15px;
+    }
+}
+

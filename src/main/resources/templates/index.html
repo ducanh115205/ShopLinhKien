@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kho Linh Kiện - Trang Chủ</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+<div class="store-layout">
+    <aside class="left-panel">
+        <div class="brand-block">
+            <h1>Kho Linh Kiện</h1>
+            <p>Linh kiện kỹ thuật</p>
+        </div>
+        <div class="left-title">Danh mục linh kiện</div>
+        <div id="phan-trang-1" class="category-list"></div>
+
+        <div class="filter-block">
+            <div class="left-title">Lọc theo giá</div>
+            <div class="price-filter">
+                <input type="number" id="minPrice" placeholder="Giá từ (VND)" min="0">
+                <input type="number" id="maxPrice" placeholder="Giá đến (VND)" min="0">
+                <div class="filter-actions">
+                    <button id="applyPriceFilter" class="filter-btn primary">Lọc giá</button>
+                    <button id="clearFilter" class="filter-btn secondary">Xóa lọc</button>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="top-actions">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm linh kiện kỹ thuật...">
+                    <button id="searchBtn" class="icon-btn">🔍 Tìm kiếm</button>
+                </div>
+                <button id="cart-btn" class="icon-btn" type="button" title="Giỏ hàng">🛒 Giỏ hàng</button>
+                <button id="login-btn" class="icon-btn" type="button" title="Đăng nhập">🔐 Đăng nhập</button>
+                <button id="logout-btn" class="icon-btn" type="button" title="Đăng xuất">🚪 Đăng xuất</button>
+            </div>
+        </header>
+
+        <section class="hero-banner">
+            <div class="hero-content">
+                <span class="hero-tag">Hàng mới 2026</span>
+                <h2>Làm chủ công nghệ.<br>Tinh chọn chính xác.</h2>
+                <p>Vi điều khiển và cảm biến chất lượng công nghiệp, tối ưu cho hệ thống đòi hỏi độ ổn định cao.</p>
+            </div>
+        </section>
+
+        <section class="section-head">
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <h3><span id="category-title">Tất cả sản phẩm</span> <span id="total-items">(0 sản phẩm)</span></h3>
+
+                <div class="sort-options">
+                    <label for="sortPrice" style="font-weight: bold; margin-right: 10px;">Sắp xếp theo:</label>
+                    <select id="sortPrice" onchange="handleSortChange()" style="padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                        <option value="id-desc">Mới nhất</option>
+                        <option value="price-asc">Giá: Thấp đến Cao</option>
+                        <option value="price-desc">Giá: Cao đến Thấp</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <div class="noi_dung">
+            <div id="ds-san-pham" class="danh_sach_san_pham"></div>
+        </div>
+
+        <div id="phan-trang"></div>
+    </main>
+</div>
+
+<script th:src="@{/js/index.js}"></script>
+</body>
+</html>

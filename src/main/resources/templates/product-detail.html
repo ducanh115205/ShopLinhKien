@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết sản phẩm - Kho Linh Kiện</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        .detail-container { padding: 40px; background: #fff; border-radius: 12px; display: flex; gap: 40px; margin-top: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .detail-image img { width: 400px; height: 400px; object-fit: contain; border: 1px solid #eee; border-radius: 8px; }
+        .detail-info { flex: 1; }
+        .detail-title { font-size: 32px; color: #1f2758; margin-bottom: 10px; }
+        .detail-price { font-size: 36px; color: #14207f; font-weight: 800; margin: 20px 0; }
+        .detail-desc { color: #6f7592; line-height: 1.6; margin-bottom: 30px; }
+        .action-group { display: flex; gap: 15px; align-items: center; }
+        .qty-input { width: 70px; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-weight: bold; text-align: center; }
+        .btn-add-cart { background: #152184; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .btn-add-cart:hover { background: #2e3cb7; }
+    </style>
+</head>
+<body>
+<div class="store-layout">
+    <aside class="left-panel">
+        <div class="brand-block" style="cursor: pointer;" onclick="window.location.href='/'">
+            <h1>Kho Linh Kiện</h1>
+            <p>Về Trang Chủ</p>
+        </div>
+    </aside>
+    <main class="main-content">
+        <!-- Lưu ID sản phẩm vào một thẻ ẩn để JavaScript lấy được -->
+        <span id="hidden-product-id" style="display:none;" th:text="${productId}"></span>
+        
+        <header class="topbar">
+            <h2 style="margin: 0; color: #fff;">Thông tin sản phẩm</h2>
+            <button class="icon-btn" id="cart-btn">Giỏ hàng</button>
+        </header>
+
+        <div class="detail-container" id="product-detail-content">
+            <div class="loading">Đang tải thông tin sản phẩm...</div>
+        </div>
+    </main>
+</div>
+<!-- Sử dụng file JS có sẵn trong dự án của bạn -->
+<script th:src="@{/js/product-detail.js}"></script>
+</body>
+</html>

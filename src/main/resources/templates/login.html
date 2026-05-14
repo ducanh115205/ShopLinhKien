@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/dangnhap.css}">
+    <title>Kho Linh Kiện - Đăng nhập</title>
+</head>
+<body>
+<div class="auth-layout">
+    <section class="form-panel">
+        <div class="form-card khung" id="auth-box">
+            <div class="switcher">
+                <button type="button" class="switch-btn active" id="tab-login">Đăng nhập</button>
+                <button type="button" class="switch-btn" id="tab-register">Đăng ký</button>
+            </div>
+
+            <div class="forms-wrap">
+                <div class="bieumau dangnhap">
+                    <h2>Chào mừng trở lại</h2>
+                    <p>Đăng nhập để quản lý dự án và đơn hàng của bạn.</p>
+                    <form onsubmit="dangnhap(event)">
+                        <label for="email">Username</label>
+                        <div class="truongnhap">
+                            <input name="username" type="text" id="email" placeholder="name@company.com">
+                        </div>
+                        <div class="loi" id="loi_email"></div>
+
+                        <div class="password-row">
+                            <label for="matkhau">Mật khẩu</label>
+                            <a href="#">Quên mật khẩu?</a>
+                        </div>
+                        <div class="truongnhap">
+                            <input name="password" type="password" id="matkhau" placeholder="********">
+                        </div>
+                        <div class="loi" id="loi_mat_khau"></div>
+
+                        <button class="submit-btn" type="submit">Đăng nhập</button>
+                    </form>
+                </div>
+
+                <div class="bieumau dangky">
+                    <h2>Tạo tài khoản mới</h2>
+                    <p>Đăng ký nhanh để bắt đầu đặt linh kiện.</p>
+                    <form onsubmit="xacnhandangky(event)">
+                        <label for="emaildangky">Email</label>
+                        <div class="truongnhap">
+                            <input type="text" id="emaildangky" placeholder="email@company.com">
+                        </div>
+                        <div class="loi" id="loi_emaildangky"></div>
+
+                        <label for="tendangky">Tên đăng nhập</label>
+                        <div class="truongnhap">
+                            <input type="text" id="tendangky" placeholder="Nhập tên đăng nhập">
+                        </div>
+                        <div class="loi" id="loi_tendangky"></div>
+
+                        <label for="matkhaudangky">Mật khẩu</label>
+                        <div class="truongnhap">
+                            <input type="password" id="matkhaudangky" placeholder="Tối thiểu 8 ký tự">
+                        </div>
+                        <div class="loi" id="loi_mat_khaudangky"></div>
+
+                        <label for="matkhaudangkynhaplai">Nhập lại mật khẩu</label>
+                        <div class="truongnhap">
+                            <input type="password" id="matkhaudangkynhaplai" placeholder="Nhập lại mật khẩu">
+                        </div>
+                        <div class="loi" id="loi_mat_khaudangkynhaplai"></div>
+
+                        <button class="submit-btn" type="submit">Đăng ký</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script th:src="@{/js/login.js}"></script>
+</body>
+</html>

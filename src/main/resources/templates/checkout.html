@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh Toán - Kho Linh Kiện</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        .checkout-container {
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-top: 20px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .checkout-title {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .section-title {
+            font-size: 18px;
+            color: #2c3e50;
+            margin: 20px 0 10px 0;
+            font-weight: bold;
+        }
+        .cart-summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .cart-summary-table th, .cart-summary-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .cart-summary-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+        .cart-summary-table td:last-child {
+            text-align: right;
+        }
+        .total-row {
+            font-size: 20px;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .btn-confirm {
+            background: #2ecc71;
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+        }
+        .btn-confirm:hover {
+            background: #27ae60;
+        }
+        .btn-confirm:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+        .empty-checkout {
+            text-align: center;
+            padding: 50px;
+            color: #7f8c8d;
+            font-size: 18px;
+        }
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        @media (max-width: 600px) {
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="store-layout">
+    <aside class="left-panel">
+        <div class="brand-block" style="cursor: pointer;" onclick="window.location.href='/'">
+            <h1>Kho Linh Kiện</h1>
+            <p>Về Trang Chủ</p>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <h2 style="margin: 0; color: #2c3e50;">🛒 Thanh Toán</h2>
+            <button class="icon-btn" onclick="window.location.href='/cart'" style="background: #3498db; color: white; padding: 10px 20px;">⬅ Quay lại giỏ hàng</button>
+        </header>
+
+        <div class="checkout-container" id="checkout-content">
+            <div class="empty-checkout">Đang tải thông tin thanh toán...</div>
+        </div>
+    </main>
+</div>
+
+<script th:src="@{/js/checkout.js}"></script>
+</body>
+</html>
+
