@@ -29,6 +29,8 @@ $(document).ready(function () {
     });
 });
 
+const DEFAULT_PRODUCT_IMAGE = "/images/default-product.svg";
+
 function ensureOrdersButton() {
     const cartBtn = document.getElementById("cart-btn");
     if (!cartBtn || document.getElementById("orders-btn")) {
@@ -68,7 +70,7 @@ function renderProductDetail(product) {
 
     const html = `
         <div class="detail-image">
-            <img src="${getProductImageUrl(product.image)}" alt="${escapeHtml(product.name)}" onerror="this.src='/images/default-product.png'">
+            <img src="${getProductImageUrl(product.image)}" alt="${escapeHtml(product.name)}" onerror="handleProductImageError(this)">
         </div>
         <div class="detail-info">
             <h2 class="detail-title">${escapeHtml(product.name)}</h2>
@@ -145,8 +147,8 @@ function escapeHtml(text) {
 }
 
 function getProductImageUrl(image) {
-    if (!image) {
-        return "/images/default-product.png";
+    if (!image || !image.trim()) {
+        return DEFAULT_PRODUCT_IMAGE;
     }
 
     const value = image.trim();
@@ -155,4 +157,9 @@ function getProductImageUrl(image) {
     }
 
     return value.startsWith("images/") ? `/${value}` : `/images/${value}`;
+}
+
+function handleProductImageError(img) {
+    img.onerror = null;
+    img.src = DEFAULT_PRODUCT_IMAGE;
 }
