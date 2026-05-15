@@ -1,9 +1,8 @@
 const token = localStorage.getItem("token");
-const userId = localStorage.getItem("userId");
 let currentOrders = [];
 
 $(document).ready(function () {
-    if (!token || !userId) {
+    if (!token) {
         alert("Bạn cần đăng nhập để xem đơn hàng");
         window.location.href = "/login?redirect=/orders";
         return;
@@ -13,7 +12,7 @@ $(document).ready(function () {
 
 function loadMyOrders() {
     $.ajax({
-        url: `/api/orders/user/${userId}`,
+        url: `/api/orders/my-orders`,
         method: "GET",
         headers: { "Authorization": "Bearer " + token },
         success: function (response) {
@@ -111,7 +110,7 @@ function cancelOrder(orderId) {
     if (!confirm("Bạn có chắc muốn hủy đơn hàng này không?")) return;
 
     $.ajax({
-        url: `/api/orders/${orderId}/cancel?userId=${userId}`,
+        url: `/api/orders/${orderId}/cancel`,
         method: "PUT",
         headers: { "Authorization": "Bearer " + token },
         success: function (response) {
