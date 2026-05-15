@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.*;
 public class ShipmentDetailController {
     private final ShipmentDetailService shipmentDetailService;
 
-    @GetMapping("/{id}")
-    public ShipmentDetailResponse get(@PathVariable Long id) {
-        return shipmentDetailService.getShipmentDetailByUser(id);
+    @GetMapping("/me")
+    public ShipmentDetailResponse getCurrentUserShipmentDetail() {
+        return shipmentDetailService.getCurrentUserShipmentDetail();
     }
 
     @PostMapping("/create")
