@@ -25,9 +25,9 @@ public class CartService {
     private final CartMapper cartMapper;
     private final CurrentUserService currentUserService;
 
-    public List<CartResponse> getCartByUserId(Long userId) {
-        assertCurrentUser(userId);
-        return cartRepository.findByUserId(userId)
+    public List<CartResponse> getCurrentUserCart() {
+        User user = currentUserService.getCurrentUser();
+        return cartRepository.findByUserId(user.getId())
                 .stream()
                 .map(cartMapper::toResponse)
                 .collect(Collectors.toList());
@@ -39,7 +39,6 @@ public class CartService {
         }
 
         User user = currentUserService.getCurrentUser();
-        assertSameUser(user.getId(), request.getUserId());
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
@@ -66,46 +65,31 @@ public class CartService {
         return cartMapper.toResponse(cartRepository.save(cart));
     }
 
-    public void updateQuantity(List<UpdateCartRequest> updateCartRequest) {
-        User user = currentUserService.getCurrentUser();
-        for (UpdateCartRequest request : updateCartRequest) {
-            if (request.getQuantity() <= 0) {
-                throw new RuntimeException("Số lượng phải lớn hơn 0");
-            }
-
-            assertSameUser(user.getId(), request.getUserId());
-            Product product = productRepository.findById(request.getProductId())
-                    .orElseThrow(() -> new RuntimeException("Product not found"));
-
-            if (request.getQuantity() > product.getQuantity()) {
-                throw new RuntimeException("Sản phẩm " + product.getName() + " không đủ số lượng! Còn lại: " + product.getQuantity());
-            }
-
-            Cart cart = cartRepository.findByUserAndProduct(user, product)
-                    .orElseThrow(() -> new RuntimeException("Cart not found"));
-            cart.setQuantity(request.getQuantity());
-            cartRepository.save(cart);
+    public void updateQuantity(UpdateCartRequest request) {
+        if (request.getQuantity() <= 0) {
+            throw new RuntimeException("Số lượng phải lớn hơn 0");
         }
+
+        User user = currentUserService.getCurrentUser();
+        Product product = productRepository.findById(request.getProductId())
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        if (request.getQuantity() > product.getQuantity()) {
+            throw new RuntimeException("Sản phẩm " + product.getName() + " không đủ số lượng! Còn lại: " + product.getQuantity());
+        }
+
+        Cart cart = cartRepository.findByUserAndProduct(user, product)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+        cart.setQuantity(request.getQuantity());
+        cartRepository.save(cart);
     }
 
-    public void removeFromCart(Long userId, Long productId) {
+    public void removeFromCart(Long productId) {
         User user = currentUserService.getCurrentUser();
-        assertSameUser(user.getId(), userId);
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
         Cart cart = cartRepository.findByUserAndProduct(user, product)
                 .orElseThrow(() -> new RuntimeException("Cart item not found"));
         cartRepository.delete(cart);
-    }
-
-    private void assertCurrentUser(Long requestedUserId) {
-        User currentUser = currentUserService.getCurrentUser();
-        assertSameUser(currentUser.getId(), requestedUserId);
-    }
-
-    private void assertSameUser(Long currentUserId, Long requestedUserId) {
-        if (requestedUserId == null || !currentUserId.equals(requestedUserId)) {
-            throw new RuntimeException("Ban khong co quyen thao tac gio hang nay");
-        }
     }
 }
