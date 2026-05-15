@@ -3,6 +3,7 @@ $(document).ready(function () {
     loadCart();
 });
 
+const DEFAULT_PRODUCT_IMAGE = "/images/default-product.svg";
 let currentCart = [];
 
 function ensureOrdersShortcut() {
@@ -69,7 +70,7 @@ function renderCart() {
 
         tbodyHtml += `
             <tr>
-                <td><img src="${getProductImageUrl(item.image)}" class="cart-item-img" onerror="this.src='/images/default-product.png'"></td>
+                <td><img src="${getProductImageUrl(item.image)}" class="cart-item-img" onerror="handleProductImageError(this)"></td>
                 <td style="text-align: left; font-weight: bold; font-size: 16px;">${escapeHtml(item.productName)}</td>
                 <td style="color: #2c3e50; font-weight: bold;">${formatCurrency(item.price)}</td>
                 <td>
@@ -183,8 +184,8 @@ function escapeHtml(text) {
 }
 
 function getProductImageUrl(image) {
-    if (!image) {
-        return "/images/default-product.png";
+    if (!image || !image.trim()) {
+        return DEFAULT_PRODUCT_IMAGE;
     }
 
     const value = image.trim();
@@ -193,4 +194,9 @@ function getProductImageUrl(image) {
     }
 
     return value.startsWith("images/") ? `/${value}` : `/images/${value}`;
+}
+
+function handleProductImageError(img) {
+    img.onerror = null;
+    img.src = DEFAULT_PRODUCT_IMAGE;
 }
