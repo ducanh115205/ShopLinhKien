@@ -31,8 +31,8 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}")
-    public ApiResponse<OrderResponse> getOrderById(@PathVariable Long orderId, @RequestParam Long userId) {
-        OrderResponse order = orderService.getOrderById(orderId, userId);
+    public ApiResponse<OrderResponse> getOrderById(@PathVariable Long orderId) {
+        OrderResponse order = orderService.getCurrentUserOrderById(orderId);
         return ApiResponse.<OrderResponse>builder()
                 .success(true)
                 .message("Lấy thông tin đơn hàng thành công")
@@ -40,9 +40,9 @@ public class OrderController {
                 .build();
     }
 
-    @GetMapping("/user/{userId}")
-    public ApiResponse<List<OrderResponse>> getOrdersByUser(@PathVariable Long userId) {
-        List<OrderResponse> orders = orderService.getOrdersByUser(userId);
+    @GetMapping("/my-orders")
+    public ApiResponse<List<OrderResponse>> getCurrentUserOrders() {
+        List<OrderResponse> orders = orderService.getCurrentUserOrders();
         return ApiResponse.<List<OrderResponse>>builder()
                 .success(true)
                 .message("Lấy lịch sử đơn hàng thành công")
@@ -51,8 +51,8 @@ public class OrderController {
     }
 
     @PutMapping("/{orderId}/cancel")
-    public ApiResponse<OrderResponse> cancelOrderByUser(@PathVariable Long orderId, @RequestParam Long userId) {
-        OrderResponse order = orderService.cancelOrderByUser(orderId, userId);
+    public ApiResponse<OrderResponse> cancelOrderByUser(@PathVariable Long orderId) {
+        OrderResponse order = orderService.cancelCurrentUserOrder(orderId);
         return ApiResponse.<OrderResponse>builder()
                 .success(true)
                 .message("Hủy đơn hàng thành công")
