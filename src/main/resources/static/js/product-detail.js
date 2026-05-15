@@ -6,7 +6,6 @@ $(document).ready(function () {
         $('#product-detail-content').html('<h2>Sản phẩm không tồn tại!</h2>');
     }
 
-    // Sự kiện nút giỏ hàng góc trên
     ensureOrdersButton();
 
     $('#cart-btn').click(function() {
@@ -46,7 +45,6 @@ function ensureOrdersButton() {
 }
 
 function loadProductDetail(id) {
-    // Gọi API lấy 1 sản phẩm. (Đảm bảo Backend của bạn có API /api/products/{id})
     $.ajax({
         url: `/api/products/${id}`,
         method: "GET",
@@ -94,24 +92,22 @@ function renderProductDetail(product) {
     $('#product-detail-content').html(html);
 }
 
-// Hàm thêm vào giỏ hàng (Tương tự như ở index.js)
 async function addToCartDetail(productId) {
-    const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
     const quantity = $('#buy-qty').val();
 
-    if (!userId || !token) {
+    if (!token) {
         alert("Bạn cần đăng nhập để mua hàng!");
         window.location.href = "/login";
         return;
     }
 
     if (quantity < 1) {
-        alert("Số lượng không hợp lệ!"); return;
+        alert("Số lượng không hợp lệ!");
+        return;
     }
 
     const payload = {
-        userId: parseInt(userId, 10),
         productId: parseInt(productId, 10),
         quantity: parseInt(quantity, 10)
     };
@@ -130,17 +126,17 @@ async function addToCartDetail(productId) {
         if (data.success) {
             alert("✅ Đã thêm " + quantity + " sản phẩm vào giỏ hàng!");
         } else {
-            alert("Thêm thất bại: " + data.message);
+            alert("Thêm thất bại: " + (data.error || data.message));
         }
     } catch (err) {
         alert("Lỗi khi thêm sản phẩm vào giỏ hàng");
     }
 }
 
-// Tiện ích
 function formatPrice(price) {
     return Number(price || 0).toLocaleString("vi-VN") + " VND";
 }
+
 function escapeHtml(text) {
     if (!text) return '';
     const div = document.createElement('div');
