@@ -3,9 +3,8 @@ $(document).ready(function () {
     loadCart();
 });
 
-let currentCart = []; // Lưu trữ tạm mảng giỏ hàng để tính toán
+let currentCart = [];
 
-// 1. Tải dữ liệu giỏ hàng từ API
 function ensureOrdersShortcut() {
     const topbar = document.querySelector(".topbar");
     if (!topbar || document.getElementById("orders-btn")) {
@@ -35,16 +34,15 @@ function ensureOrdersShortcut() {
 }
 
 function loadCart() {
-    const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
 
-    if (!userId || !token) {
+    if (!token) {
         $('#cart-content').html('<div class="empty-cart">Bạn chưa đăng nhập. Vui lòng <a href="/login" style="color: #3498db;">đăng nhập</a> để xem giỏ hàng!</div>');
         return;
     }
 
     $.ajax({
-        url: `/api/carts/${userId}`,
+        url: `/api/carts`,
         method: "GET",
         headers: { "Authorization": `Bearer ${token}` },
         success: function (response) {
@@ -61,7 +59,6 @@ function loadCart() {
     });
 }
 
-// 2. Vẽ giao diện bảng giỏ hàng
 function renderCart() {
     let totalAmount = 0;
     let tbodyHtml = '';
@@ -115,18 +112,14 @@ function renderCart() {
     $('#cart-content').html(html);
 }
 
-// 3. API Tăng / Giảm số lượng
 function updateQuantity(productId, newQuantity) {
     if (newQuantity < 1) {
         removeCartItem(productId);
         return;
     }
 
-    const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
-
     const payload = {
-        userId: parseInt(userId, 10),
         productId: parseInt(productId, 10),
         quantity: parseInt(newQuantity, 10)
     };
@@ -140,34 +133,36 @@ function updateQuantity(productId, newQuantity) {
         success: function (res) {
             if (res.success) loadCart();
             else alert("Cập nhật số lượng thất bại: " + res.message);
+        },
+        error: function (xhr) {
+            alert("Cập nhật số lượng thất bại: " + (xhr.responseJSON?.error || "Vui lòng thử lại"));
         }
     });
 }
 
-// 4. API Xóa 1 sản phẩm
 function removeCartItem(productId) {
     if (!confirm("Xóa sản phẩm này khỏi giỏ hàng của bạn?")) return;
 
-    const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
 
     $.ajax({
-        url: `/api/carts/${userId}/${productId}`,
+        url: `/api/carts/${productId}`,
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` },
         success: function (res) {
             if (res.success) loadCart();
             else alert("Lỗi khi xóa: " + res.message);
+        },
+        error: function (xhr) {
+            alert("Lỗi khi xóa: " + (xhr.responseJSON?.error || "Vui lòng thử lại"));
         }
     });
 }
 
-// 5. Nút Đặt hàng
 function checkout() {
     const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("userId");
 
-    if (!token || !userId) {
+    if (!token) {
         alert("Vui lòng đăng nhập để tiến hành thanh toán!");
         window.location.href = "/login?redirect=/checkout";
         return;
@@ -176,12 +171,10 @@ function checkout() {
     window.location.href = "/checkout";
 }
 
-// Helper: Định dạng tiền tệ VND
 function formatCurrency(amount) {
     return Number(amount || 0).toLocaleString("vi-VN") + " ₫";
 }
 
-// Helper: Chống lỗi hiển thị HTML
 function escapeHtml(text) {
     if (!text) return '';
     const div = document.createElement('div');
