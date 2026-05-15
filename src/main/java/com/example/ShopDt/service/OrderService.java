@@ -43,7 +43,6 @@ public class OrderService {
     public OrderResponse createOrder(OrderRequest request) {
         User user = currentUserService.getCurrentUser();
         Long userId = user.getId();
-        assertSameUser(userId, request.getUserId());
 
         List<Cart> cartItems = cartRepository.findByUserId(userId);
         if (cartItems.isEmpty()) {
@@ -54,7 +53,7 @@ public class OrderService {
         if (request.getShipmentDetailId() != null) {
             shipmentDetail = shipmentDetailRepository.findById(request.getShipmentDetailId())
                     .orElseThrow(() -> new RuntimeException("Khong tim thay thong tin giao hang"));
-            if (shipmentDetail.getUser() != null && !shipmentDetail.getUser().getId().equals(userId)) {
+            if (shipmentDetail.getUser() == null || !shipmentDetail.getUser().getId().equals(userId)) {
                 throw new RuntimeException("Thong tin giao hang khong thuoc ve nguoi dung nay");
             }
         }
@@ -102,19 +101,19 @@ public class OrderService {
         return orderMapper.toOrderResponse(order);
     }
 
-    public OrderResponse getOrderById(Long orderId, Long userId) {
-        assertCurrentUser(userId);
+    public OrderResponse getCurrentUserOrderById(Long orderId) {
+        User user = currentUserService.getCurrentUser();
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Khong tim thay don hang"));
-        if (!order.getUser().getId().equals(userId)) {
+        if (!order.getUser().getId().equals(user.getId())) {
             throw new RuntimeException("Ban khong co quyen xem don hang nay");
         }
         return orderMapper.toOrderResponse(order);
     }
 
-    public List<OrderResponse> getOrdersByUser(Long userId) {
-        assertCurrentUser(userId);
-        return orderRepository.findByUserIdOrderByCreateAtDesc(userId)
+    public List<OrderResponse> getCurrentUserOrders() {
+        User user = currentUserService.getCurrentUser();
+        return orderRepository.findByUserIdOrderByCreateAtDesc(user.getId())
                 .stream()
                 .map(orderMapper::toOrderResponse)
                 .toList();
@@ -154,12 +153,12 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse cancelOrderByUser(Long orderId, Long userId) {
-        assertCurrentUser(userId);
+    public OrderResponse cancelCurrentUserOrder(Long orderId) {
+        User user = currentUserService.getCurrentUser();
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Khong tim thay don hang"));
 
-        if (!order.getUser().getId().equals(userId)) {
+        if (!order.getUser().getId().equals(user.getId())) {
             throw new RuntimeException("Ban khong co quyen huy don hang nay");
         }
         if (order.getStatus() != CHO_XAC_NHAN) {
@@ -182,17 +181,6 @@ public class OrderService {
     private void validateStatus(int status) {
         if (status < CHO_XAC_NHAN || status > DA_HUY) {
             throw new RuntimeException("Trang thai don hang khong hop le");
-        }
-    }
-
-    private void assertCurrentUser(Long requestedUserId) {
-        User currentUser = currentUserService.getCurrentUser();
-        assertSameUser(currentUser.getId(), requestedUserId);
-    }
-
-    private void assertSameUser(Long currentUserId, Long requestedUserId) {
-        if (requestedUserId == null || !currentUserId.equals(requestedUserId)) {
-            throw new RuntimeException("Ban khong co quyen thao tac don hang nay");
         }
     }
 }
