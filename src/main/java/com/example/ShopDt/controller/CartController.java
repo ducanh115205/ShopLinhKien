@@ -17,11 +17,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "Cart")
 public class CartController {
-    final CartService cartService;
+    private final CartService cartService;
 
-    @GetMapping("/{userId}")
-    public ApiResponse<List<CartResponse>> getCart(@PathVariable long userId) {
-        List<CartResponse> cart = cartService.getCartByUserId(userId);
+    @GetMapping
+    public ApiResponse<List<CartResponse>> getCart() {
+        List<CartResponse> cart = cartService.getCurrentUserCart();
         return ApiResponse.<List<CartResponse>>builder()
                 .success(true)
                 .message("Mở giỏ hàng thành công")
@@ -41,16 +41,16 @@ public class CartController {
 
     @PutMapping("/update")
     public ApiResponse<Void> updateQuantity(@Valid @RequestBody UpdateCartRequest request) {
-        cartService.updateQuantity(java.util.List.of(request));
+        cartService.updateQuantity(request);
         return ApiResponse.<Void>builder()
                 .success(true)
                 .message("Cập nhật thành công")
                 .build();
     }
 
-    @DeleteMapping("/{userId}/{productId}")
-    public ApiResponse<Void> deleteCart(@PathVariable Long userId, @PathVariable Long productId) {
-        cartService.removeFromCart(userId, productId);
+    @DeleteMapping("/{productId}")
+    public ApiResponse<Void> deleteCart(@PathVariable Long productId) {
+        cartService.removeFromCart(productId);
         return ApiResponse.<Void>builder()
                 .success(true)
                 .message("Xóa thành công")
