@@ -6,26 +6,25 @@ let currentCart = [];
 let shipmentDetailId = null;
 
 function checkAuthAndLoadCheckout() {
-    const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
 
-    if (!userId || !token) {
+    if (!token) {
         window.location.href = "/login?redirect=/checkout";
         return;
     }
 
-    loadCheckoutData(userId, token);
+    loadCheckoutData(token);
 }
 
-function loadCheckoutData(userId, token) {
+function loadCheckoutData(token) {
     $.ajax({
-        url: `/api/carts/${userId}`,
+        url: `/api/carts`,
         method: "GET",
         headers: { "Authorization": `Bearer ${token}` },
         success: function (response) {
             if (response.success && response.data && response.data.length > 0) {
                 currentCart = response.data;
-                loadShipmentDetail(userId, token);
+                loadShipmentDetail(token);
             } else {
                 $('#checkout-content').html(`
                     <div class="empty-checkout">
@@ -41,9 +40,9 @@ function loadCheckoutData(userId, token) {
     });
 }
 
-function loadShipmentDetail(userId, token) {
+function loadShipmentDetail(token) {
     $.ajax({
-        url: `/api/shipment/${userId}`,
+        url: `/api/shipment/me`,
         method: "GET",
         headers: { "Authorization": `Bearer ${token}` },
         success: function (response) {
@@ -127,10 +126,9 @@ function renderCheckout(shipmentDetail) {
 async function submitOrder(event) {
     event.preventDefault();
 
-    const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
 
-    if (!userId || !token) {
+    if (!token) {
         alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
         window.location.href = "/login?redirect=/checkout";
         return;
@@ -161,7 +159,6 @@ async function submitOrder(event) {
                     "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    userId: parseInt(userId, 10),
                     receiver,
                     phoneNumber,
                     address,
@@ -184,7 +181,6 @@ async function submitOrder(event) {
                 },
                 body: JSON.stringify({
                     id: currentShipmentId,
-                    userId: parseInt(userId, 10),
                     receiver,
                     phoneNumber,
                     address,
@@ -204,7 +200,6 @@ async function submitOrder(event) {
                 "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify({
-                userId: parseInt(userId, 10),
                 note,
                 shipmentDetailId: currentShipmentId
             })
