@@ -1,11 +1,12 @@
 package com.example.ShopDt.controller;
 
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class DefaultImageController {
+
+    private static final String SVG_MEDIA_TYPE = "image/svg+xml";
 
     private static final String DEFAULT_PRODUCT_IMAGE_SVG =
             "<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'>"
@@ -16,12 +17,12 @@ public class DefaultImageController {
                     + "<text x='300' y='335' text-anchor='middle' font-family='Arial, sans-serif' font-size='28' fill='#6b7280'>Chua co anh</text>"
                     + "</svg>";
 
-    @GetMapping(value = "/images/default-product.png", produces = MediaType.IMAGE_SVG_XML_VALUE)
+    @GetMapping(value = "/images/default-product.png", produces = SVG_MEDIA_TYPE)
     public String getDefaultProductPngFallback() {
         return DEFAULT_PRODUCT_IMAGE_SVG;
     }
 
-    @GetMapping(value = "/images/default-product.svg", produces = MediaType.IMAGE_SVG_XML_VALUE)
+    @GetMapping(value = "/images/default-product.svg", produces = SVG_MEDIA_TYPE)
     public String getDefaultProductSvgFallback() {
         return DEFAULT_PRODUCT_IMAGE_SVG;
     }
