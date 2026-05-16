@@ -41,25 +41,25 @@ public class SecurityConfig {
                 }))
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints - cho phép tất cả GET requests đến static resources và pages
                         .requestMatchers(
-                                "/",                      // Root
-                                "/home",                  // Home page
-                                "/search",                // Trang tìm kiếm
-                                "/search.html",           // Trang tìm kiếm html
-                                "/product/**",            // Trang chi tiết sản phẩm
-                                "/login",                 // Trang login
-                                "/register",              // Trang register
-                                "/cart",                  // Trang giỏ hàng
-                                "/orders",                // Trang lịch sử đơn hàng
-                                "/checkout",              // Trang thanh toán
-                                "/css/**",                // Static resources
+                                "/",
+                                "/home",
+                                "/search",
+                                "/search.html",
+                                "/product/**",
+                                "/login",
+                                "/register",
+                                "/cart",
+                                "/orders",
+                                "/checkout",
+                                "/css/**",
                                 "/js/**",
                                 "/images/**",
-                                "/error"                  // Error page
+                                "/uploads/**",
+                                "/favicon.ico",
+                                "/error"
                         ).permitAll()
 
-                        // API public endpoints
                         .requestMatchers(
                                 "/api/login",
                                 "/api/auth/**",
@@ -78,13 +78,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/products/**", "/api/category/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/products/**", "/api/category/**").hasRole("ADMIN")
 
-                        // Admin endpoints
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-
-                        // Cart endpoints
                         .requestMatchers("/api/carts/**").authenticated()
-
-                        // Các API khác
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -94,7 +89,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordPasswordEncoder();
     }
 
     @Bean
