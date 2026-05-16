@@ -58,15 +58,7 @@ public class OrderService {
             }
         }
 
-        for (Cart cart : cartItems) {
-            Product product = cart.getProduct();
-            if (cart.getQuantity() <= 0) {
-                throw new RuntimeException("So luong mua phai lon hon 0");
-            }
-            if (product.getQuantity() < cart.getQuantity()) {
-                throw new RuntimeException("San pham " + product.getName() + " khong du ton kho. Con lai: " + product.getQuantity());
-            }
-        }
+        validateCartItemsBeforeOrder(cartItems);
 
         Order order = new Order();
         order.setUser(user);
@@ -168,6 +160,21 @@ public class OrderService {
         restoreStock(order);
         order.setStatus(DA_HUY);
         return orderMapper.toOrderResponse(orderRepository.save(order));
+    }
+
+    private void validateCartItemsBeforeOrder(List<Cart> cartItems) {
+        for (Cart cart : cartItems) {
+            Product product = cart.getProduct();
+            if (product.getStatus() != 1) {
+                throw new RuntimeException("San pham " + product.getName() + " hien da ngung ban. Vui long xoa san pham nay khoi gio hang truoc khi dat hang.");
+            }
+            if (cart.getQuantity() <= 0) {
+                throw new RuntimeException("So luong mua phai lon hon 0");
+            }
+            if (product.getQuantity() < cart.getQuantity()) {
+                throw new RuntimeException("San pham " + product.getName() + " khong du ton kho. Con lai: " + product.getQuantity());
+            }
+        }
     }
 
     private void restoreStock(Order order) {
