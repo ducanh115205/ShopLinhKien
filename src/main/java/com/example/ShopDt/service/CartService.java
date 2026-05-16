@@ -39,12 +39,7 @@ public class CartService {
         }
 
         User user = currentUserService.getCurrentUser();
-        Product product = productRepository.findById(request.getProductId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-
-        if (product.getStatus() != 1) {
-            throw new RuntimeException("Sản phẩm hiện không còn được bán");
-        }
+        Product product = getActiveProduct(request.getProductId());
 
         int currentQuantityInCart = cartRepository.findByUserAndProduct(user, product)
                 .map(Cart::getQuantity)
@@ -71,8 +66,7 @@ public class CartService {
         }
 
         User user = currentUserService.getCurrentUser();
-        Product product = productRepository.findById(request.getProductId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+        Product product = getActiveProduct(request.getProductId());
 
         if (request.getQuantity() > product.getQuantity()) {
             throw new RuntimeException("Sản phẩm " + product.getName() + " không đủ số lượng! Còn lại: " + product.getQuantity());
@@ -91,5 +85,14 @@ public class CartService {
         Cart cart = cartRepository.findByUserAndProduct(user, product)
                 .orElseThrow(() -> new RuntimeException("Cart item not found"));
         cartRepository.delete(cart);
+    }
+
+    private Product getActiveProduct(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        if (product.getStatus() != 1) {
+            throw new RuntimeException("Sản phẩm " + product.getName() + " hiện đã ngừng bán");
+        }
+        return product;
     }
 }
