@@ -93,55 +93,73 @@
 
 (function () {
     const FILTER_BAR_ID = 'admin-product-filter-bar';
+    const PAGINATION_ID = 'admin-product-pagination';
     const EMPTY_ROW_ID = 'product-filter-empty-row';
+    let productCurrentPage = 1;
 
     function ensureProductFilterBar() {
-        if (document.getElementById(FILTER_BAR_ID)) {
-            return;
+        if (!document.getElementById(FILTER_BAR_ID)) {
+            const tableContainer = $('#products-content .table-container').first();
+            if (!tableContainer.length) {
+                return;
+            }
+
+            const filterBar = $(`
+                <div id="${FILTER_BAR_ID}" style="background:#f8f9fa; border:1px solid #e5e7eb; border-radius:8px; padding:14px; margin-bottom:16px; display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end;">
+                    <div style="display:flex; flex-direction:column; gap:5px; min-width:220px; flex:1;">
+                        <label style="font-weight:bold; color:#2c3e50;">Tìm theo tên</label>
+                        <input id="product-filter-keyword" type="text" placeholder="Nhập tên sản phẩm..." style="padding:9px; border:1px solid #ccc; border-radius:5px;">
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:5px; min-width:190px;">
+                        <label style="font-weight:bold; color:#2c3e50;">Danh mục</label>
+                        <select id="product-filter-category" style="padding:9px; border:1px solid #ccc; border-radius:5px;">
+                            <option value="all">Tất cả danh mục</option>
+                        </select>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:5px; min-width:150px;">
+                        <label style="font-weight:bold; color:#2c3e50;">Trạng thái</label>
+                        <select id="product-filter-status" style="padding:9px; border:1px solid #ccc; border-radius:5px;">
+                            <option value="all">Tất cả</option>
+                            <option value="1">Đang bán</option>
+                            <option value="0">Ngừng bán</option>
+                        </select>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:5px; min-width:130px;">
+                        <label style="font-weight:bold; color:#2c3e50;">Giá từ</label>
+                        <input id="product-filter-min-price" type="number" min="0" placeholder="0" style="padding:9px; border:1px solid #ccc; border-radius:5px;">
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:5px; min-width:130px;">
+                        <label style="font-weight:bold; color:#2c3e50;">Giá đến</label>
+                        <input id="product-filter-max-price" type="number" min="0" placeholder="Không giới hạn" style="padding:9px; border:1px solid #ccc; border-radius:5px;">
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:5px; min-width:120px;">
+                        <label style="font-weight:bold; color:#2c3e50;">Mỗi trang</label>
+                        <select id="product-filter-page-size" style="padding:9px; border:1px solid #ccc; border-radius:5px;">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+                    <button id="product-filter-clear" type="button" style="background:#95a5a6; color:white; border:none; padding:10px 14px; border-radius:5px; cursor:pointer; font-weight:bold;">Xóa lọc</button>
+                    <span id="product-filter-count" style="font-weight:bold; color:#2c3e50; margin-left:auto;">Hiển thị 0 sản phẩm</span>
+                </div>
+            `);
+
+            tableContainer.before(filterBar);
+            tableContainer.after(`<div id="${PAGINATION_ID}" style="display:flex; justify-content:flex-end; align-items:center; gap:8px; margin-top:14px; flex-wrap:wrap;"></div>`);
+
+            $('#product-filter-keyword, #product-filter-category, #product-filter-status, #product-filter-min-price, #product-filter-max-price')
+                .on('input change', function () {
+                    productCurrentPage = 1;
+                    applyProductFilters();
+                });
+            $('#product-filter-page-size').on('change', function () {
+                productCurrentPage = 1;
+                applyProductFilters();
+            });
+            $('#product-filter-clear').on('click', clearProductFilters);
         }
-
-        const tableContainer = $('#products-content .table-container').first();
-        if (!tableContainer.length) {
-            return;
-        }
-
-        const filterBar = $(`
-            <div id="${FILTER_BAR_ID}" style="background:#f8f9fa; border:1px solid #e5e7eb; border-radius:8px; padding:14px; margin-bottom:16px; display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end;">
-                <div style="display:flex; flex-direction:column; gap:5px; min-width:220px; flex:1;">
-                    <label style="font-weight:bold; color:#2c3e50;">Tìm theo tên</label>
-                    <input id="product-filter-keyword" type="text" placeholder="Nhập tên sản phẩm..." style="padding:9px; border:1px solid #ccc; border-radius:5px;">
-                </div>
-                <div style="display:flex; flex-direction:column; gap:5px; min-width:190px;">
-                    <label style="font-weight:bold; color:#2c3e50;">Danh mục</label>
-                    <select id="product-filter-category" style="padding:9px; border:1px solid #ccc; border-radius:5px;">
-                        <option value="all">Tất cả danh mục</option>
-                    </select>
-                </div>
-                <div style="display:flex; flex-direction:column; gap:5px; min-width:150px;">
-                    <label style="font-weight:bold; color:#2c3e50;">Trạng thái</label>
-                    <select id="product-filter-status" style="padding:9px; border:1px solid #ccc; border-radius:5px;">
-                        <option value="all">Tất cả</option>
-                        <option value="1">Đang bán</option>
-                        <option value="0">Ngừng bán</option>
-                    </select>
-                </div>
-                <div style="display:flex; flex-direction:column; gap:5px; min-width:130px;">
-                    <label style="font-weight:bold; color:#2c3e50;">Giá từ</label>
-                    <input id="product-filter-min-price" type="number" min="0" placeholder="0" style="padding:9px; border:1px solid #ccc; border-radius:5px;">
-                </div>
-                <div style="display:flex; flex-direction:column; gap:5px; min-width:130px;">
-                    <label style="font-weight:bold; color:#2c3e50;">Giá đến</label>
-                    <input id="product-filter-max-price" type="number" min="0" placeholder="Không giới hạn" style="padding:9px; border:1px solid #ccc; border-radius:5px;">
-                </div>
-                <button id="product-filter-clear" type="button" style="background:#95a5a6; color:white; border:none; padding:10px 14px; border-radius:5px; cursor:pointer; font-weight:bold;">Xóa lọc</button>
-                <span id="product-filter-count" style="font-weight:bold; color:#2c3e50; margin-left:auto;">Hiển thị 0 sản phẩm</span>
-            </div>
-        `);
-
-        tableContainer.before(filterBar);
-        $('#product-filter-keyword, #product-filter-category, #product-filter-status, #product-filter-min-price, #product-filter-max-price')
-            .on('input change', applyProductFilters);
-        $('#product-filter-clear').on('click', clearProductFilters);
     }
 
     function refreshProductCategoryOptions() {
@@ -189,18 +207,19 @@
         const status = $('#product-filter-status').val() || 'all';
         const minPrice = parseNumber($('#product-filter-min-price').val());
         const maxPrice = parseNumber($('#product-filter-max-price').val());
-        let visibleCount = 0;
+        const pageSize = getProductPageSize();
         let totalCount = 0;
+        const matchedRows = [];
 
         $('#' + EMPTY_ROW_ID).remove();
 
-        $('#products-list-tbody tr').each(function () {
+        const productRows = $('#products-list-tbody tr').filter(function () {
+            return $(this).find('td').length >= 8;
+        });
+
+        productRows.each(function () {
             const row = $(this);
             const cells = row.find('td');
-            if (cells.length < 8) {
-                return;
-            }
-
             totalCount += 1;
             const nameText = cells.eq(2).text().trim().toLowerCase();
             const categoryText = cells.eq(3).text().trim();
@@ -214,18 +233,70 @@
                 || (status === '0' && (statusText.includes('Nghỉ bán') || statusText.includes('Ngừng bán')));
             const matchesMinPrice = minPrice === null || price >= minPrice;
             const matchesMaxPrice = maxPrice === null || price <= maxPrice;
-            const shouldShow = matchesKeyword && matchesCategory && matchesStatus && matchesMinPrice && matchesMaxPrice;
 
-            row.toggle(shouldShow);
-            if (shouldShow) {
-                visibleCount += 1;
+            if (matchesKeyword && matchesCategory && matchesStatus && matchesMinPrice && matchesMaxPrice) {
+                matchedRows.push(row);
             }
         });
 
-        $('#product-filter-count').text(`Hiển thị ${visibleCount} / ${totalCount} sản phẩm`);
-        if (totalCount > 0 && visibleCount === 0) {
+        const matchedCount = matchedRows.length;
+        const totalPages = Math.max(1, Math.ceil(matchedCount / pageSize));
+        productCurrentPage = Math.min(Math.max(productCurrentPage, 1), totalPages);
+
+        productRows.hide();
+        if (matchedCount === 0) {
+            $('#product-filter-count').text(`Hiển thị 0 / ${totalCount} sản phẩm`);
             $('#products-list-tbody').append(`<tr id="${EMPTY_ROW_ID}"><td colspan="8" class="loading-text">Không có sản phẩm phù hợp với bộ lọc</td></tr>`);
+            renderProductPagination(0, pageSize, totalPages);
+            return;
         }
+
+        const startIndex = (productCurrentPage - 1) * pageSize;
+        const endIndex = Math.min(startIndex + pageSize, matchedCount);
+        matchedRows.slice(startIndex, endIndex).forEach(row => row.show());
+
+        $('#product-filter-count').text(`Hiển thị ${startIndex + 1}-${endIndex} / ${matchedCount} sản phẩm` + (matchedCount !== totalCount ? ` (tổng ${totalCount})` : ''));
+        renderProductPagination(matchedCount, pageSize, totalPages);
+    }
+
+    function renderProductPagination(matchedCount, pageSize, totalPages) {
+        const pagination = $('#' + PAGINATION_ID);
+        if (!pagination.length) {
+            return;
+        }
+
+        pagination.empty();
+        if (matchedCount <= pageSize || matchedCount === 0) {
+            return;
+        }
+
+        const buttonStyle = 'border:none; padding:8px 12px; border-radius:5px; cursor:pointer; font-weight:bold;';
+        const disabledStyle = 'background:#ecf0f1; color:#95a5a6; cursor:not-allowed;';
+        const normalStyle = 'background:#34495e; color:white;';
+        const activeStyle = 'background:#3498db; color:white;';
+
+        const prevDisabled = productCurrentPage <= 1;
+        const nextDisabled = productCurrentPage >= totalPages;
+        pagination.append(`<button type="button" class="product-page-btn" data-page="${productCurrentPage - 1}" ${prevDisabled ? 'disabled' : ''} style="${buttonStyle}${prevDisabled ? disabledStyle : normalStyle}">Trước</button>`);
+
+        const startPage = Math.max(1, productCurrentPage - 2);
+        const endPage = Math.min(totalPages, productCurrentPage + 2);
+        for (let page = startPage; page <= endPage; page++) {
+            const isActive = page === productCurrentPage;
+            pagination.append(`<button type="button" class="product-page-btn" data-page="${page}" ${isActive ? 'disabled' : ''} style="${buttonStyle}${isActive ? activeStyle : normalStyle}">${page}</button>`);
+        }
+
+        pagination.append(`<span style="font-weight:bold; color:#2c3e50; padding:0 4px;">Trang ${productCurrentPage} / ${totalPages}</span>`);
+        pagination.append(`<button type="button" class="product-page-btn" data-page="${productCurrentPage + 1}" ${nextDisabled ? 'disabled' : ''} style="${buttonStyle}${nextDisabled ? disabledStyle : normalStyle}">Sau</button>`);
+
+        pagination.find('.product-page-btn').on('click', function () {
+            const page = parseInt($(this).data('page'), 10);
+            if (!Number.isFinite(page) || page < 1 || page > totalPages || page === productCurrentPage) {
+                return;
+            }
+            productCurrentPage = page;
+            applyProductFilters();
+        });
     }
 
     function clearProductFilters() {
@@ -234,7 +305,14 @@
         $('#product-filter-status').val('all');
         $('#product-filter-min-price').val('');
         $('#product-filter-max-price').val('');
+        $('#product-filter-page-size').val('10');
+        productCurrentPage = 1;
         applyProductFilters();
+    }
+
+    function getProductPageSize() {
+        const value = parseInt($('#product-filter-page-size').val(), 10);
+        return Number.isFinite(value) && value > 0 ? value : 10;
     }
 
     function parseCurrency(text) {
@@ -264,6 +342,7 @@
     if (typeof originalLoadAllProductsForFilter === 'function') {
         window.loadAllProducts = function () {
             const result = originalLoadAllProductsForFilter.apply(this, arguments);
+            productCurrentPage = 1;
             setTimeout(function () {
                 ensureProductFilterBar();
                 refreshProductCategoryOptions();
@@ -275,6 +354,7 @@
 
     $(document).ajaxComplete(function (_event, _xhr, settings) {
         if (settings && settings.url && settings.url.includes('/api/products/all')) {
+            productCurrentPage = 1;
             ensureProductFilterBar();
             refreshProductCategoryOptions();
             applyProductFilters();
