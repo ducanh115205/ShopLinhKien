@@ -11,7 +11,6 @@ import com.example.ShopDt.mapper.product.ProductMapper;
 import com.example.ShopDt.repository.CategoryRepository;
 import com.example.ShopDt.repository.ProductCategoryRepository;
 import com.example.ShopDt.repository.ProductRepository;
-import com.example.ShopDt.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,7 +19,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.stream.Collectors;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,18 +37,13 @@ public class ProductService {
                 .toList();
     }
 
-    public PaginatedResponse<ProductResponse> searchProducts(
-            ProductSearchRequest searchRequest, int page, int size) {
-
-        // Validate page và size
+    public PaginatedResponse<ProductResponse> searchProducts(ProductSearchRequest searchRequest, int page, int size) {
         page = Math.max(page, 0);
         size = (size <= 0) ? 10 : size;
 
-        // Xử lý sắp xếp từ searchRequest hoặc mặc định
         Sort sort = buildSort(searchRequest);
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        // Thực hiện tìm kiếm với các tiêu chí
         Page<Product> productPage = productRepository.searchProducts(
                 searchRequest.getKeyword(),
                 searchRequest.getListCategoryId(),
@@ -59,25 +52,14 @@ public class ProductService {
                 pageable
         );
 
-        // Map sang response
         List<ProductResponse> productResponses = productPage.getContent()
                 .stream()
                 .map(productMapper::toResponse)
                 .toList();
 
-        // Trả về kết quả phân trang
-        return PaginatedResponse.<ProductResponse>builder()
-                .content(productResponses)
-                .page(productPage.getNumber())
-                .size(productPage.getSize())
-                .totalElements(productPage.getTotalElements())
-                .totalPages(productPage.getTotalPages())
-                .first(productPage.isFirst())
-                .last(productPage.isLast())
-                .hasNext(productPage.hasNext())
-                .hasPrevious(productPage.hasPrevious())
-                .build();
+        return buildPaginatedResponse(productPage, productResponses);
     }
+
     private Sort buildSort(ProductSearchRequest searchRequest) {
         String sortBy = "id";
         String sortDir = "asc";
@@ -90,7 +72,6 @@ public class ProductService {
             }
         }
 
-        // Validate sortBy để tránh SQL injection
         List<String> allowedFields = Arrays.asList("id", "name", "price", "quantity");
         if (!allowedFields.contains(sortBy)) {
             sortBy = "id";
@@ -100,6 +81,7 @@ public class ProductService {
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
     }
+
     public PaginatedResponse<ProductResponse> findAllPaginated(int page, int size, String sortBy, String sortDir) {
         page = Math.max(page, 0);
         size = (size <= 0) ? 10 : size;
@@ -118,31 +100,16 @@ public class ProductService {
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Product> productPage = productRepository.findAll(pageable);
 
-        // Map sang ProductResponse
         List<ProductResponse> productResponses = productPage.getContent()
                 .stream()
                 .map(productMapper::toResponse)
                 .toList();
 
-        // Tạo PaginatedResponse
-        return PaginatedResponse.<ProductResponse>builder()
-                .content(productResponses)
-                .page(productPage.getNumber())
-                .size(productPage.getSize())
-                .totalElements(productPage.getTotalElements())
-                .totalPages(productPage.getTotalPages())
-                .first(productPage.isFirst())
-                .last(productPage.isLast())
-                .hasNext(productPage.hasNext())
-                .hasPrevious(productPage.hasPrevious())
-                .build();
+        return buildPaginatedResponse(productPage, productResponses);
     }
 
-
-
     public ProductResponse findById(long id) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+        Product product = getProductById(id);
         return productMapper.toResponse(product);
     }
 
@@ -151,38 +118,33 @@ public class ProductService {
         Product product = productMapper.toEntity(productRequest);
         product = productRepository.save(product);
 
-        // Lưu category nếu có
         if (productRequest.getCategoryId() != null) {
             Category category = categoryRepository.findById(productRequest.getCategoryId())
                     .orElseThrow(() -> new RuntimeException("Category not found"));
             ProductCategory pc = new ProductCategory();
             pc.setProduct(product);
             pc.setCategory(category);
-            productCategoryRepository.save(pc); //
+            productCategoryRepository.save(pc);
         }
         return productMapper.toResponse(product);
     }
+
     @Transactional
     public ProductResponse update(Long id, ProductRequest request) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
+        Product product = getProductById(id);
 
-        // Cập nhật thông tin cơ bản
         product.setName(request.getName());
         product.setPrice(request.getPrice());
         product.setQuantity(request.getQuantity());
         product.setDescription(request.getDescription());
         product.setImage(request.getImage());
-        product.setStatus(request.getStatus()); // Lưu status mới từ request
+        product.setStatus(request.getStatus());
 
         productRepository.save(product);
 
-        // Cập nhật Category
         if (request.getCategoryId() != null) {
-            // Xóa các category cũ của sản phẩm này trong bảng trung gian
             productCategoryRepository.deleteByProductId(id);
 
-            // Thêm category mới
             Category category = categoryRepository.findById(request.getCategoryId())
                     .orElseThrow(() -> new RuntimeException("Danh mục không tồn tại"));
 
@@ -195,38 +157,47 @@ public class ProductService {
         return productMapper.toResponse(product);
     }
 
-    // Thêm hàm lấy sản phẩm theo danh mục
-    // Thêm hàm lấy sản phẩm theo danh mục
     public PaginatedResponse<ProductResponse> findByCategoryIdPaginated(Long categoryId, int page, int size) {
-        // Tạo đối tượng phân trang
         Pageable pageable = PageRequest.of(page, size);
-
-        // Lấy dữ liệu từ DB
         Page<Product> productPage = productRepository.findByCategoryId(categoryId, pageable);
 
-        // ĐÃ SỬA: Dùng productMapper::toResponse
         List<ProductResponse> content = productPage.getContent().stream()
                 .map(productMapper::toResponse)
                 .toList();
 
-        // ĐÃ SỬA: Đóng gói chuẩn theo thuộc tính của PaginatedResponse.java
+        return buildPaginatedResponse(productPage, content);
+    }
+
+    @Transactional
+    public void delete(long id) {
+        Product product = getProductById(id);
+        product.setStatus(0);
+        productRepository.save(product);
+    }
+
+    @Transactional
+    public ProductResponse restore(long id) {
+        Product product = getProductById(id);
+        product.setStatus(1);
+        return productMapper.toResponse(productRepository.save(product));
+    }
+
+    private Product getProductById(long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+    }
+
+    private PaginatedResponse<ProductResponse> buildPaginatedResponse(Page<Product> productPage, List<ProductResponse> content) {
         return PaginatedResponse.<ProductResponse>builder()
                 .content(content)
-                .page(productPage.getNumber())           // Sửa thành page
-                .size(productPage.getSize())             // Sửa thành size
+                .page(productPage.getNumber())
+                .size(productPage.getSize())
                 .totalElements(productPage.getTotalElements())
                 .totalPages(productPage.getTotalPages())
-                .first(productPage.isFirst())            // Thêm các thuộc tính cờ
+                .first(productPage.isFirst())
                 .last(productPage.isLast())
                 .hasNext(productPage.hasNext())
                 .hasPrevious(productPage.hasPrevious())
                 .build();
-    }
-
-    public void delete(long id){
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-        product.setStatus(0);
-        productRepository.save(product);
     }
 }
